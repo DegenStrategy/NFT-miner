@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/NFT-miner/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	 <link rel="icon" type="image/x-icon" href="https://degen-pls.com/favicon.ico">
+    <title>DegenStrategy NFT Miners</title>
+    <style>
+      /* Global casino vibes: Black/green neon, slot-machine glow */
+body {
+  background: #000;
+  color: #00ff00;
+  font-family: 'Courier New', monospace;
+  margin: 0;
+  padding: 20px;
+  min-height: 100vh; /* Ensure body takes full viewport height */
+}
+
+.container {
+  max-width: 800px;
+  margin: 15vh auto 0; /* 25vh pushes it 25% down from the top, auto for horizontal centering */
+  text-align: center;
+  border: 2px solid #00ff00;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 20px #00ff00;
+}
+
+.earnings-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+  width: 100%;
+  padding: 10px;
+}
+
+.nft-earnings-box {
+  padding: 30px; /* Increased padding for larger interior */
+  border: 4px solid #00ff00; /* Thicker border for prominence */
+  border-radius: 14px; /* Slightly larger radius for bigger box */
+  background: linear-gradient(45deg, #1a1a1a, #000000);
+  text-align: center;
+  position: relative;
+  width: 100%; /* Ensure it takes full container width */
+  max-width: 400px; /* Larger box size, adjustable */
+  box-shadow: 0 0 20px rgba(0, 255, 0, 0.6), /* Base glow for border */
+              inset 0 0 12px rgba(0, 255, 0, 0.4);
+  animation: radiant-glow 3s ease-in-out infinite, /* Keep radiant glow */
+            glowing-border 1.5s ease-in-out infinite; /* Add border-specific glow */
+  overflow: hidden;
+}
+
+/* Radiant glow for the whole box */
+@keyframes radiant-glow {
+  0% {
+    background: linear-gradient(45deg, #1a1a1a, #000000);
+    box-shadow: 0 0 20px rgba(0, 255, 0, 0.6), inset 0 0 12px rgba(0, 255, 0, 0.4);
+  }
+  50% {
+    background: linear-gradient(45deg, #1a1a1a, #002200);
+    box-shadow: 0 0 35px rgba(0, 255, 0, 0.9), inset 0 0 20px rgba(0, 255, 0, 0.7);
+  }
+  100% {
+    background: linear-gradient(45deg, #1a1a1a, #000000);
+    box-shadow: 0 0 20px rgba(0, 255, 0, 0.6), inset 0 0 12px rgba(0, 255, 0, 0.4);
+  }
+}
+
+/* Glowing border animation */
+@keyframes glowing-border {
+  0% {
+    border-color: #00ff00;
+    box-shadow: 0 0 20px rgba(0, 255, 0, 0.6), /* Sync with base glow */
+                inset 0 0 12px rgba(0, 255, 0, 0.4);
+  }
+  50% {
+    border-color: #33ff33; /* Lighter green for glow peak */
+    box-shadow: 0 0 40px rgba(0, 255, 0, 1), /* Intense border glow */
+                inset 0 0 15px rgba(0, 255, 0, 0.6);
+  }
+  100% {
+    border-color: #00ff00;
+    box-shadow: 0 0 20px rgba(0, 255, 0, 0.6), inset 0 0 12px rgba(0, 255, 0, 0.4);
+  }
+}
+
+/* Hover effect for interactivity */
+.nft-earnings-box:hover {
+  transform: scale(1.05);
+  transition: transform 0.3s ease;
+  box-shadow: 0 0 50px rgba(0, 255, 0, 1), /* Stronger glow on hover */
+              inset 0 0 25px rgba(0, 255, 0, 0.8);
+}
+
+.earnings-item {
+  display: flex;
+  align-items: center; /* Vertically centers the icon and text */
+  justify-content: center; /* Horizontally centers the icon and text */
+  gap: 8px; /* Spacing between icon and text */
+}
+
+.token-icon {
+  vertical-align: middle; /* Fallback for older browsers */
+}
+
+/* Ensure all overlays have distinct z-index values */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+}
+
+.burn-options-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7); /* Slightly darker for distinction */
+  z-index: 1000;
+}
+
+.popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #1a1a1a;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 20px rgba(255, 0, 0, 0.5);
+  color: #fff;
+}
+
+.burn-popup {
+  max-height: 80vh;
+  overflow-y: auto;
+  width: 90%;
+  max-width: 500px;
+  z-index: 1000; /* Ensure burn popup is above settings overlay */
+}
+
+.purchases-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.purchase-box {
+  background-color: #2a2a2a;
+  padding: 15px;
+  border-radius: 8px;
+  border: 1px solid #ff0000;
+}
+
+.burn-option-button {
+  background-color: #ff4444;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  z-index: 10; /* Ensure button is clickable */
+}
+
+.burn-option-button:hover {
+  background-color: #cc0000;
+}
+
+.burn-options-popup {
+  width: 90%;
+  max-width: 400px;
+  z-index: 1001; /* Above burn-options-overlay */
+}
+
+.burn-options-popup label {
+  display: block;
+  margin: 10px 0 5px;
+  color: #fff;
+}
+
+.burn-options-popup input,
+.burn-options-popup select {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  border: 1px solid #ff0000;
+  background-color: #333;
+  color: #fff;
+}
+
+.burn-options-popup button {
+  background-color: #ff0000;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin: 5px;
+}
+
+.burn-options-popup button:hover {
+  background-color: #cc0000;
+}
+
+.settings-popup {
+  position: relative;
+  width: 90%;
+  max-width: 500px;
+  z-index: 999; /* Matches settings overlay */
+}
+
+.burn-nft-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: #ff0000;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  font-size: 12px;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background-color 0.3s;
+  z-index: 10;
+}
+
+.burn-nft-button:hover {
+  background-color: #cc0000;
+}
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+  z-index: 1000; /* Ensure overlay is above other content */
+  display: none; /* Controlled by inline styles in JSX */
+}
+
+.popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #1a1a1a; /* Dark background for popup */
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 255, 255, 0.5); /* Neon glow effect */
+  z-index: 1001; /* Ensure popup is above overlay */
+  color: #fff;
+  max-width: 500px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.burn-options-popup {
+  display: block; /* Ensure popup is visible when rendered */
+}
+
+.burn-options-popup h2 {
+  margin-top: 0;
+  color: #00ffff; /* Neon cyan for heading */
+}
+
+.burn-options-popup label {
+  display: block;
+  margin: 10px 0 5px;
+  font-weight: bold;
+}
+
+.burn-options-popup input,
+.burn-options-popup select {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 10px;
+  border: 1px solid #00ffff;
+  border-radius: 5px;
+  background: #333;
+  color: #fff;
+}
+
+.burn-options-popup button {
+  padding: 10px 20px;
+  margin: 5px;
+  border: none;
+  border-radius: 5px;
+  background: #00ffff;
+  color: #000;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.burn-options-popup button:disabled {
+  background: #555;
+  cursor: not-allowed;
+}
+
+.burn-options-popup button:hover:not(:disabled) {
+  background: #00cccc;
+}
+/* Modal overlay to cover the screen */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: #000000;
+  padding: 20px;
+  border-radius: 8px;
+  max-width: 690px;
+  max-height: 80vh;
+  overflow-y: auto;
+  position: relative;
+  border: 2px solid #00ff00; /* Bright green border */
+  box-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00, 0 0 30px #00ff00; /* Neon glow effect */
+}
+
+/* Close button */
+.modal-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+/* Responsive design for mobile */
+@media (max-width: 600px) {
+  .modal-content {
+    width: 95%;
+    padding: 15px;
+  }
+}
+
+/* Ensure payment address doesn't overflow (from your previous question) */
+.payment-address {
+  word-break: break-all;
+  display: inline-block;
+}
+
+
+      .neon-glow { text-shadow: 0 0 10px #00ff00; animation: glow 1s ease-in-out infinite alternate; }
+      @keyframes glow { from { text-shadow: 0 0 10px #00ff00; } to { text-shadow: 0 0 20px #00ff00, 0 0 30px #00ff00; } }
+      input, select, button { background: #111; color: #00ff00; border: 1px solid #00ff00; padding: 10px; margin: 5px; font-family: inherit; }
+      button { cursor: pointer; transition: box-shadow 0.3s; }
+      button:hover { box-shadow: 0 0 15px #00ff00; }
+      .slot-vibe {
+		  font-size: 24px;
+		  animation: slotSpin 3s linear infinite; /* Slower: 3s instead of 2s */
+		  display: inline-block;
+		  overflow: hidden;
+		  height: 24px; /* Matches font-size */
+		  line-height: 24px;
+		}
+
+		@keyframes slotSpin {
+		  0% { transform: translateY(0); }
+		  33% { transform: translateY(-12px); } /* Move up one "slot" */
+		  66% { transform: translateY(-28px); } /* Move up two "slots" */
+		  100% { transform: translateY(0); } /* Reset to start */
+		}
+      .popup { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #000; border: 2px solid #00ff00; padding: 20px; display: none; z-index: 1000; }
+      .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: none; z-index: 999; }
+    </style>
+    <script type="module" crossorigin src="/NFT-miner/assets/index-DevoNqzU.js"></script>
+    <link rel="stylesheet" crossorigin href="/NFT-miner/assets/index-Cs9mLtrU.css">
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>
